@@ -1,0 +1,19 @@
+{
+  "name": "mariposa",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Rompecabezas 3D: 11 piezas en L dentro de un cubo de 5x5x5",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "test": "node scripts/logic-test.mjs",
+    "e2e": "node scripts/e2e.mjs",
+    "shot": "node scripts/shoot.mjs"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}
