@@ -53,6 +53,10 @@ await desktop.page.mouse.click(target.x, target.y);
 await desktop.page.waitForTimeout(900);
 await desktop.page.screenshot({ path: path.join(outDir, '03-colocada.png') });
 
+// Vaciar para que la receta de pistas pueda completar el cubo desde cero.
+await desktop.page.locator('#btn-undo').click();
+await desktop.page.waitForTimeout(400);
+
 // Rellenar con pistas hasta ganar
 for (let i = 0; i < 11; i += 1) {
   const hint = desktop.page.locator('#btn-hint');

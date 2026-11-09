@@ -1,8 +1,9 @@
 /**
  * Geometría del puzzle "Mariposa".
  *
- * Cada pieza es una L de 5 cubos: dos barras de 3 unidades unidas en ángulo
- * recto y compartiendo la esquina (3 + 3 - 1 = 5). Cabe en una caja de 3×3×1.
+ * Cada pieza es una L de 5 celdas extruida dos veces en altura: dos barras de
+ * 3 × 2 unidas en ángulo recto y compartiendo la esquina. Ocupa 10 cubos
+ * (3 + 3 - 1 = 5 celdas × 2 de grosor) y cabe en una caja de 3×2×3.
  */
 
 export const CUBE = 5;
@@ -12,6 +13,8 @@ export const PIECE_COUNT = 11;
 const BASE_CELLS = [
   [0, 0, 0], [1, 0, 0], [2, 0, 0],
   [0, 0, 1], [0, 0, 2],
+  [0, 1, 0], [1, 1, 0], [2, 1, 0],
+  [0, 1, 1], [0, 1, 2],
 ];
 
 const keyOf = (cells) =>

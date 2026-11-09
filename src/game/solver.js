@@ -1,28 +1,27 @@
 import { ORIENTATIONS, ORIENTATION_BY_KEY } from './shape.js';
 
-const FLAT = ORIENTATIONS.filter((o) => o.size[1] === 1 && o.cells.length === 5);
-
-const BASE_KEY = '0,0,0|0,0,1|0,0,2|1,0,0|2,0,0';
+const FLAT = ORIENTATIONS.filter((o) => o.size[1] === 2 && o.cells.length === 10);
 
 /**
- * Receta densa: 4 piezas planas por capa en las dos primeras capas y 3 en la
- * tercera. Deja un hueco de 5 celdas por capa (no existe teselado de 5 Ls en
- * un cuadrado de 5×5), pero es mucho más bonito que amontonar piezas.
+ * Receta densa: 11 piezas de 10 cubos caben en el cubo de 5×5×5 dejando 15
+ * celdas libres. Capas ocupadas: 19 / 25 / 22 / 21 / 23.
+ * Las piezas son intercambiables, así que la receta solo fija posiciones.
  */
 const RECIPE = [
-  { key: BASE_KEY, x: 1, y: 0, z: 0 },
-  { key: '0,0,0|0,0,1|0,0,2|1,0,2|2,0,2', x: 0, y: 0, z: 1 },
-  { key: '0,0,2|1,0,2|2,0,0|2,0,1|2,0,2', x: 1, y: 0, z: 2 },
-  { key: '0,0,0|1,0,0|2,0,0|2,0,1|2,0,2', x: 2, y: 0, z: 1 },
+  { key: '0,0,0|0,0,1|0,0,2|0,1,2|0,2,2|1,0,0|1,0,1|1,0,2|1,1,2|1,2,2', x: 3, y: 0, z: 0 },
+  { key: '0,0,0|0,1,0|0,2,0|0,2,1|0,2,2|1,0,0|1,1,0|1,2,0|1,2,1|1,2,2', x: 0, y: 0, z: 1 },
+  { key: '0,0,0|0,0,1|0,0,2|0,1,0|0,1,1|0,1,2|1,0,0|1,1,0|2,0,0|2,1,0', x: 0, y: 0, z: 2 },
+  { key: '0,0,0|0,0,1|1,0,0|1,0,1|2,0,0|2,0,1|2,1,0|2,1,1|2,2,0|2,2,1', x: 2, y: 0, z: 3 },
 
-  { key: BASE_KEY, x: 1, y: 1, z: 0 },
-  { key: '0,0,0|0,0,1|0,0,2|1,0,2|2,0,2', x: 0, y: 1, z: 1 },
-  { key: '0,0,2|1,0,2|2,0,0|2,0,1|2,0,2', x: 1, y: 1, z: 2 },
-  { key: '0,0,0|1,0,0|2,0,0|2,0,1|2,0,2', x: 2, y: 1, z: 1 },
+  { key: '0,0,0|0,1,0|0,2,0|0,2,1|0,2,2|1,0,0|1,1,0|1,2,0|1,2,1|1,2,2', x: 0, y: 1, z: 0 },
+  { key: '0,0,0|0,0,1|0,1,0|0,1,1|0,2,0|0,2,1|1,0,0|1,0,1|2,0,0|2,0,1', x: 2, y: 1, z: 0 },
+  { key: '0,0,0|0,0,1|1,0,0|1,0,1|2,0,0|2,0,1|2,1,0|2,1,1|2,2,0|2,2,1', x: 1, y: 1, z: 3 },
 
-  { key: BASE_KEY, x: 0, y: 2, z: 0 },
-  { key: BASE_KEY, x: 1, y: 2, z: 1 },
-  { key: BASE_KEY, x: 2, y: 2, z: 2 },
+  { key: '0,2,0|0,2,1|1,2,0|1,2,1|2,0,0|2,0,1|2,1,0|2,1,1|2,2,0|2,2,1', x: 1, y: 2, z: 0 },
+  { key: '0,0,2|0,1,2|0,2,0|0,2,1|0,2,2|1,0,2|1,1,2|1,2,0|1,2,1|1,2,2', x: 0, y: 2, z: 2 },
+  { key: '0,0,0|0,0,1|0,1,0|0,1,1|0,2,0|0,2,1|1,2,0|1,2,1|2,2,0|2,2,1', x: 2, y: 2, z: 3 },
+
+  { key: '0,0,2|0,1,2|1,0,2|1,1,2|2,0,0|2,0,1|2,0,2|2,1,0|2,1,1|2,1,2', x: 2, y: 3, z: 0 },
 ];
 
 function firstRecipeSpot(board) {

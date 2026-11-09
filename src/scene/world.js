@@ -17,58 +17,67 @@ export const gridToWorld = (x, y, z) =>
   new THREE.Vector3(x - HALF, y, z - HALF);
 
 const cellKey = (c) => c.join(',');
-const DIRECTIONS = [
-  [1, 0, 0], [-1, 0, 0],
-  [0, 1, 0], [0, -1, 0],
-  [0, 0, 1], [0, 0, -1],
-];
 
 /**
- * La pieza se dibuja como dos barras de madera unidas en ángulo recto.
- * A partir de las celdas se localiza la esquina y se reconstruyen las barras,
- * así funciona en cualquiera de las 12 orientaciones.
+ * La pieza es una L plana de 5 celdas extruida 2 celdas de grosor, así que se
+ * dibuja como dos barras de madera de 3 × 2 unidas en ángulo recto. Se
+ * reconstruyen las barras desde las celdas para cualquiera de las 12
+ * orientaciones: se detecta el eje de grosor, se proyecta la L y se busca su
+ * esquina.
  */
 function armBoxes(cells) {
-  const set = new Set(cells.map(cellKey));
-  let corner = null;
-  let cornerDirs = null;
+  const min = [0, 1, 2].map((a) => Math.min(...cells.map((c) => c[a])));
+  const max = [0, 1, 2].map((a) => Math.max(...cells.map((c) => c[a])));
+  const size = max.map((v, a) => v - min[a] + 1);
 
-  for (const cell of cells) {
-    const neighbours = DIRECTIONS.filter((d) =>
-      set.has(cellKey([cell[0] + d[0], cell[1] + d[1], cell[2] + d[2]])),
-    );
-    if (neighbours.length === 2) {
-      const axisA = neighbours[0].findIndex((v) => v !== 0);
-      const axisB = neighbours[1].findIndex((v) => v !== 0);
-      if (axisA !== axisB) {
-        corner = cell;
-        cornerDirs = neighbours;
-        break;
+  // El grosor es el único eje con extensión 2.
+  const thicknessAxis = size.findIndex((s) => s === 2);
+  const planeAxes = [0, 1, 2].filter((a) => a !== thicknessAxis);
+
+  if (thicknessAxis !== -1 && size.filter((s) => s === 2).length === 1) {
+    // Una celdas por columna del plano: las de la cara inferior del grosor.
+    const skeleton = cells.filter((c) => c[thicknessAxis] === min[thicknessAxis]);
+    const inPlane = new Set(skeleton.map(cellKey));
+
+    for (const cell of skeleton) {
+      const dirs = [];
+      for (const axis of planeAxes) {
+        for (const sign of [-1, 1]) {
+          const next = [...cell];
+          next[axis] += sign;
+          if (inPlane.has(cellKey(next))) {
+            dirs.push(next.map((v, i) => v - cell[i]));
+          }
+        }
+      }
+      const axisA = dirs[0]?.findIndex((v) => v !== 0);
+      const axisB = dirs[1]?.findIndex((v) => v !== 0);
+      if (dirs.length === 2 && axisA !== axisB) {
+        return dirs.map((dir) => {
+          const dirAxis = dir.findIndex((v) => v !== 0);
+          const center = [0, 0, 0];
+          const dims = [0, 0, 0];
+          for (let a = 0; a < 3; a += 1) {
+            if (a === dirAxis) {
+              const start = cell[a] + Math.min(0, dir[a] * 2);
+              dims[a] = 3;
+              center[a] = start + 1.5;
+            } else if (a === thicknessAxis) {
+              dims[a] = 2;
+              center[a] = min[a] + 1;
+            } else {
+              dims[a] = 1;
+              center[a] = cell[a] + 0.5;
+            }
+          }
+          return { center, size: dims };
+        });
       }
     }
   }
 
-  if (!corner) {
-    // Respaldo improbable: una caja por celda.
-    return cells.map((c) => ({ center: [c[0] + 0.5, c[1] + 0.5, c[2] + 0.5], size: [1, 1, 1] }));
-  }
-
-  return cornerDirs.map((dir) => {
-    const arm = [corner];
-    for (let step = 1; step <= 2; step += 1) {
-      arm.push([corner[0] + dir[0] * step, corner[1] + dir[1] * step, corner[2] + dir[2] * step]);
-    }
-    const min = [0, 0, 0];
-    const max = [0, 0, 0];
-    for (let a = 0; a < 3; a += 1) {
-      min[a] = Math.min(...arm.map((c) => c[a]));
-      max[a] = Math.max(...arm.map((c) => c[a]));
-    }
-    return {
-      center: [min[0] + (max[0] - min[0] + 1) / 2, min[1] + (max[1] - min[1] + 1) / 2, min[2] + (max[2] - min[2] + 1) / 2],
-      size: [max[0] - min[0] + 1, max[1] - min[1] + 1, max[2] - min[2] + 1],
-    };
-  });
+  // Respaldo improbable: una caja por celda.
+  return cells.map((c) => ({ center: [c[0] + 0.5, c[1] + 0.5, c[2] + 0.5], size: [1, 1, 1] }));
 }
 
 function buildPieceObject(orient, material, { ghost = false } = {}) {

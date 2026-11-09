@@ -8,10 +8,10 @@ Mariposa es un juego web en 3D: hay un cubo de madera de 5 × 5 × 5 y once piez
 en L. La meta es acomodar las once piezas dentro del cubo, sin que se solapen y
 sin que ninguna sobresalga.
 
-La idea nace de las fotos del cubo y de la pieza en L que compartiste. La
-interpretación implementada es la que confirmaste: cada pieza ocupa **5 cubos**
-(dos brazos de 3 unidos en ángulo recto, compartiendo la esquina) y puede girar
-en las tres dimensiones.
+La idea nace de las fotos del cubo y de la pieza en L que compartiste. Cada
+pieza ocupa **10 cubos**: una L de 5 celdas (dos brazos de 3 unidos en ángulo
+recto, compartiendo la esquina) con **2 celdas de grosor**. Puede girar en las
+tres dimensiones.
 
 ---
 
@@ -105,10 +105,10 @@ $env:CHROME_PATH="C:\ruta\a\chrome.exe"; npm run e2e
 
 `npm test` comprueba, entre otras cosas, que:
 
-- la pieza tiene 5 cubos y genera **12 orientaciones únicas**;
+- la pieza tiene 10 cubos (2 de grosor) y genera **12 orientaciones únicas**;
 - las cuatro rotaciones de 90° vuelven a la identidad;
 - el tablero detecta solapes y salidas del cubo;
-- la receta de pistas coloca las **once piezas** sin solapamientos (55 celdas).
+- la receta de pistas coloca las **once piezas** sin solapamientos (110 celdas).
 
 ---
 
@@ -133,24 +133,22 @@ $env:CHROME_PATH="C:\ruta\a\chrome.exe"; npm run e2e
 
 ### Geometría de la pieza
 
+Vista superior de la L (5 celdas):
+
 ```
-(0,0,0) (1,0,0) (2,0,0)
-(0,0,1)
-(0,0,2)
+(0,0) (1,0) (2,0)
+(0,1)
+(0,2)
 ```
 
-Es una L plana de 5 cubos. Al rotarla en 3D se obtienen 12 orientaciones
-distintas (no 24, porque la pieza tiene una simetría de 180° sobre su diagonal).
+Cada celda se extruye 2 unidades en altura, así que la pieza ocupa 10 cubos y
+cabe en una caja de **3 × 2 × 3** (ancho 3, alto 2, fondo 3). Al rotarla en 3D se
+obtienen 12 orientaciones distintas (no 24, porque la pieza conserva la simetría
+de 180° sobre su diagonal).
 
-La receta de pistas usa **4 piezas planas por capa** en las dos primeras capas y
-**3 en la tercera**. No es posible teselar un cuadrado de 5 × 5 con cinco L de
-5 cubos (argumento de coloreado), así que 4 por capa es el máximo práctico y deja
-un hueco de 5 celdas por capa. Aun así, las once piezas caben en solo tres capas,
+Las once piezas ocupan 110 de las 125 celdas del cubo. La receta de pistas deja
+15 celdas libres y reparte la ocupación por capas en **19 / 25 / 22 / 21 / 23**,
 que es lo que muestra la pantalla de victoria.
-
-> Si prefieres la variante de **4 cubos (3 × 2)** en lugar de 5, cambia
-> `BASE_CELLS` en `src/game/shape.js` y ajusta la receta de `solver.js`. El resto
-> del juego se adapta solo (orientaciones, validación y pistas).
 
 ---
 

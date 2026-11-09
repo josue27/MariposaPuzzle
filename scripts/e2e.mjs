@@ -129,7 +129,7 @@ s = await gameState();
 check('once piezas colocadas', s.count === 11, JSON.stringify(s));
 check('estado de victoria', s.won === true);
 check('contador 11/11', (await page.locator('#stat-pieces').textContent()).trim() === '11/11');
-check('capas densas', s.layers[0] === 20 && s.layers[1] === 20 && s.layers[2] === 15, JSON.stringify(s.layers));
+check('capas densas', s.layers.join(',') === '19,25,22,21,23', JSON.stringify(s.layers));
 
 // Cerrar la victoria y ver el cubo lleno (captura)
 await page.locator('[data-win="close"]').click();

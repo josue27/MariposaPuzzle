@@ -14,7 +14,8 @@ const check = (name, condition, extra = '') => {
 };
 
 console.log(`Orientaciones únicas: ${ORIENTATIONS.length}`);
-check('la pieza tiene 5 cubos', ORIENTATIONS.every((o) => o.cells.length === 5));
+check('la pieza tiene 10 cubos', ORIENTATIONS.every((o) => o.cells.length === 10));
+check('la pieza mide 2 de grosor', ORIENTATIONS.every((o) => o.size.filter((s) => s === 2).length === 1));
 check('todas caben en 3x3x3', ORIENTATIONS.every((o) => o.size.every((s) => s <= 3)));
 check('12 orientaciones', ORIENTATIONS.length === 12, `-> ${ORIENTATIONS.length}`);
 
@@ -55,8 +56,8 @@ while (remaining.length) {
   );
 }
 check('11 pistas caben dentro del cubo', steps === PIECE_COUNT, `-> ${steps}`);
-check('55 celdas ocupadas', sim.layerCounts().reduce((a, b) => a + b, 0) === 55);
-check('sin solapamientos', sim.occupancy.filter((v) => v > 0).length === 55);
+check('110 celdas ocupadas', sim.layerCounts().reduce((a, b) => a + b, 0) === 110);
+check('sin solapamientos', sim.occupancy.filter((v) => v > 0).length === 110);
 check('todo dentro de 5x5x5', sim.placements.size === PIECE_COUNT);
 
 if (failures) {
